@@ -25,7 +25,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         installSplashScreen()
         setContent {
-            enableEdgeToEdge()
             MoEngageAssignmentTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
