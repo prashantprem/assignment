@@ -51,6 +51,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.integration.compose.Placeholder
+import com.bumptech.glide.integration.compose.placeholder
+import com.bumptech.glide.integration.ktx.ExperimentGlideFlows
 import com.example.moengageassignment.MainViewModel
 import com.example.moengageassignment.R
 import com.example.moengageassignment.data.dto.NewsArticle
@@ -97,7 +100,7 @@ fun LoadingWidget() {
 fun NewsWidget(articles: List<NewsArticle>) {
     Column(
         modifier = Modifier
-            .padding(16.dp)
+            .padding(top = 16.dp, start = 16.dp, end = 16.dp)
             .fillMaxSize()
     ) {
         Header()
@@ -141,7 +144,10 @@ fun Header() {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalGlideComposeApi::class)
+@OptIn(
+    ExperimentalFoundationApi::class, ExperimentalGlideComposeApi::class,
+    ExperimentGlideFlows::class
+)
 @Composable
 fun TopHeadlines(articles: List<NewsArticle>) {
     val context = LocalContext.current
@@ -177,7 +183,8 @@ fun TopHeadlines(articles: List<NewsArticle>) {
                     modifier = Modifier
                         .fillMaxSize()
                         .clip(RoundedCornerShape(12.dp)),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Crop,
+                    loading = placeholder(resourceId = R.drawable.ic_placeholder)
                 )
                 Text(
                     text = articles[page].title.toString(),
@@ -266,7 +273,9 @@ fun NewsItem(article: NewsArticle, context: Context) {
             modifier = Modifier
                 .size(80.dp)
                 .aspectRatio(1f),
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Crop,
+            loading = placeholder(resourceId = R.drawable.ic_placeholder)
+
         )
 
 
