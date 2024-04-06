@@ -1,9 +1,11 @@
 package com.example.moengageassignment.ui.module.home
 
+import android.content.Context
 import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,8 +39,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -50,8 +54,11 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.example.moengageassignment.MainViewModel
 import com.example.moengageassignment.R
 import com.example.moengageassignment.data.dto.NewsArticle
+import com.example.moengageassignment.utils.Extensions.openNewsInBrowser
 import com.example.moengageassignment.utils.Extensions.toFormattedDate
+import com.example.moengageassignment.utils.Extensions.toNewsFooter
 import com.example.moengageassignment.utils.Resource
+import com.example.moengageassignment.utils.Utility
 
 @Composable
 fun NewsHome(mainViewModel: MainViewModel) {
@@ -137,6 +144,7 @@ fun Header() {
 @OptIn(ExperimentalFoundationApi::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun TopHeadlines(articles: List<NewsArticle>) {
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .padding(top = 16.dp)
@@ -158,7 +166,10 @@ fun TopHeadlines(articles: List<NewsArticle>) {
             pageSpacing = 16.dp
         ) { page ->
             Box(
-                contentAlignment = Alignment.BottomCenter
+                contentAlignment = Alignment.BottomCenter,
+                modifier = Modifier.clickable {
+                    articles[page].openNewsInBrowser(context)
+                }
             ) {
                 GlideImage(
                     model = articles[page].urlToImage,
@@ -191,9 +202,10 @@ fun TopHeadlines(articles: List<NewsArticle>) {
 
 @Composable
 fun NewsArticleList(articles: List<NewsArticle>) {
+    val context = LocalContext.current
     LazyColumn() {
         items(articles.size) { index ->
-            NewsItem(articles[index])
+            NewsItem(articles[index], context)
             Spacer(modifier = Modifier.height(10.dp))
         }
     }
@@ -202,12 +214,15 @@ fun NewsArticleList(articles: List<NewsArticle>) {
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun NewsItem(article: NewsArticle) {
+fun NewsItem(article: NewsArticle, context: Context) {
     Row(
         modifier = Modifier
             .clip(RoundedCornerShape(12.dp))
             .background(color = Color(0xfffff9e5))
-            .height(150.dp)
+            .clickable {
+                article.openNewsInBrowser(context)
+            },
+        verticalAlignment = Alignment.Top
     ) {
         Column(
             modifier = Modifier
@@ -231,15 +246,25 @@ fun NewsItem(article: NewsArticle) {
                 color = Color.Black,
                 textAlign = TextAlign.Start,
                 overflow = TextOverflow.Ellipsis,
+                maxLines = 3
             )
-
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = article.toNewsFooter(),
+                style = MaterialTheme.typography.labelSmall.copy(
+                    fontSize = 10.sp
+                ),
+                color = Color.Black,
+                textAlign = TextAlign.Start,
+                overflow = TextOverflow.Ellipsis,
+            )
 
         }
         GlideImage(
             model = article.urlToImage,
             contentDescription = article.title,
             modifier = Modifier
-                .height(200.dp)
+                .size(80.dp)
                 .aspectRatio(1f),
             contentScale = ContentScale.Crop
         )

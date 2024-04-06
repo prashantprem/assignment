@@ -1,8 +1,16 @@
 package com.example.moengageassignment.utils
 
+import android.content.ActivityNotFoundException
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import androidx.core.content.ContextCompat.startActivity
+import com.example.moengageassignment.data.dto.NewsArticle
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+
 
 object Extensions {
 
@@ -20,5 +28,14 @@ object Extensions {
             else -> "th"
         }
         return "$formattedDate$suffix"
+    }
+
+    fun NewsArticle.toNewsFooter(): String {
+        val formattedTime = Utility.convertTimestampToFormattedDate(publishedAt.toString())
+        return "$formattedTime • $author"
+    }
+
+    fun NewsArticle.openNewsInBrowser(context: Context) {
+        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
     }
 }
