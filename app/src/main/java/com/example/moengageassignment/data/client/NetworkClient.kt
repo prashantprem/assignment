@@ -1,6 +1,7 @@
 package com.example.moengageassignment.data.client
 
 import android.util.Log
+import com.example.moengageassignment.utils.Resource
 import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -8,8 +9,8 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 object NetworkClient {
-    fun fetchDataFromUrl(urlString: String): Result<JSONObject> {
-        var jsonResponse: JSONObject? = null
+    fun fetchDataFromUrl(urlString: String): Resource<JSONObject> {
+        val jsonResponse: JSONObject?
         try {
             val url = URL(urlString)
             val connection = url.openConnection() as HttpURLConnection
@@ -23,16 +24,16 @@ object NetworkClient {
                 bufferedReader.useLines { lines -> lines.forEach { response.append(it) } }
                 jsonResponse = JSONObject(response.toString())
                 connection.disconnect()
-                return Result.success(jsonResponse)
+                return Resource.Success(jsonResponse)
             } else {
                 connection.disconnect()
-                return Result.failure(Error(connection.responseMessage))
+                return Resource.DataError(connection.responseMessage)
                 Log.e("NetworkClient", "Error: ${connection.responseMessage}")
             }
 
         } catch (e: Exception) {
             Log.e("NetworkClient", "Error fetching data", e)
-            return Result.failure(e)
+            return Resource.DataError(e.localizedMessage)
         }
     }
 }
