@@ -32,6 +32,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -65,6 +66,7 @@ import com.example.moengageassignment.utils.Extensions.openNewsInBrowser
 import com.example.moengageassignment.utils.Extensions.toFormattedDate
 import com.example.moengageassignment.utils.Extensions.toNewsFooter
 import com.example.moengageassignment.utils.Resource
+import kotlinx.coroutines.delay
 
 @Composable
 fun NewsHome(mainViewModel: MainViewModel) {
@@ -199,8 +201,19 @@ fun TopHeadlines(articles: List<NewsArticle>) {
             .fillMaxHeight(.4F)
     ) {
         val pagerState = rememberPagerState(pageCount = {
-            5
+            Int.MAX_VALUE
         })
+
+        //auto loop top headlines
+        LaunchedEffect(Unit) {
+            while (true) {
+                delay(3000L)
+                pagerState.animateScrollToPage(
+                    page = (pagerState.currentPage + 1) % 5
+                )
+            }
+        }
+
 
         Text(
             text = "Juicy Headlines",
@@ -210,10 +223,9 @@ fun TopHeadlines(articles: List<NewsArticle>) {
             )
         )
         Spacer(modifier = Modifier.height(8.dp))
-
         HorizontalPager(
             state = pagerState,
-            pageSpacing = 16.dp
+            pageSpacing = 16.dp,
         ) { page ->
             Box(
                 contentAlignment = Alignment.BottomCenter,
