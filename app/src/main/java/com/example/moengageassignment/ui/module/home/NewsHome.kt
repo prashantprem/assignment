@@ -29,7 +29,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -56,6 +55,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
@@ -99,7 +102,7 @@ fun NewsHome(mainViewModel: MainViewModel) {
                     }
                 ),
 
-            ) {
+                ) {
                 NewsWidget(newsArticleState.data!!) { sortType ->
                     when (sortType) {
                         DropDownMenuType.NewToOld -> {
@@ -123,7 +126,13 @@ fun LoadingWidget() {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        CircularProgressIndicator()
+        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.mango_loading))
+        LottieAnimation(
+            composition = composition,
+            iterations = LottieConstants.IterateForever,
+            speed = 1.5f,
+            modifier = Modifier.size(150.dp)
+        )
     }
 }
 
