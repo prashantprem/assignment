@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "553627797829",
+    "project_id": "mangonews-6103a",
+    "storage_bucket": "mangonews-6103a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:553627797829:android:c9b30557768e97d983962c",
+        "android_client_info": {
+          "package_name": "mango.news.moengageassignment"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3bHgjaW33MQYr8Xn7NGydLS65FyHzsP8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
