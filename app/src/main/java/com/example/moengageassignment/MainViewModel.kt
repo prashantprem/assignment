@@ -32,7 +32,7 @@ class MainViewModel @Inject constructor(
     }
 
 
-    private fun fetchNewsArticles() {
+    fun fetchNewsArticles() {
         viewModelScope.launch(Dispatchers.IO) {
             _newsArticles.emit(Resource.Loading())
             when (val res = getNewsArticlesUseCase()) {

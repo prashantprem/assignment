@@ -2,6 +2,7 @@ package com.example.moengageassignment.data.client
 
 import android.util.Log
 import com.example.moengageassignment.utils.Resource
+import com.example.moengageassignment.utils.Utility
 import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -32,8 +33,9 @@ object NetworkClient {
             }
 
         } catch (e: Exception) {
+
             Log.e("NetworkClient", "Error fetching data", e)
-            return Resource.DataError(e.localizedMessage)
+            return Resource.DataError(Utility.getErrorMessage(e))
         }
     }
 }

@@ -92,7 +92,9 @@ fun NewsHome(mainViewModel: MainViewModel) {
 
                 is Resource.Loading -> LoadingWidget()
 
-                is Resource.DataError -> {}
+                is Resource.DataError -> ErrorWidget(error = newsArticleState.error.toString()) {
+                    mainViewModel.fetchNewsArticles()
+                }
             }
             AnimatedVisibility(
                 visible = newsUiVisibleState,
@@ -116,6 +118,38 @@ fun NewsHome(mainViewModel: MainViewModel) {
                 }
             }
         }
+    }
+}
+
+@Composable
+fun ErrorWidget(error: String, tryAgain: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = error,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = "Try Again!",
+            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+            modifier = Modifier
+                .clip(RoundedCornerShape(16.dp))
+                .fillMaxWidth()
+                .background(color = Color(0xffffc400))
+                .padding(16.dp)
+                .clickable {
+                    tryAgain()
+                },
+            textAlign = TextAlign.Center
+        )
     }
 }
 
