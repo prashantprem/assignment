@@ -2,6 +2,10 @@ package com.example.moengageassignment.ui.module.home
 
 import android.content.Context
 import android.content.res.Configuration
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.expandVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -77,24 +81,36 @@ fun NewsHome(mainViewModel: MainViewModel) {
                 .fillMaxSize()
         ) {
             val newsArticleState by mainViewModel.newsArticle.collectAsState()
+            var newsUiVisibleState by remember { mutableStateOf(false) }
             when (newsArticleState) {
                 is Resource.Success -> {
-                    NewsWidget(newsArticleState.data!!) { sortType ->
-                        when (sortType) {
-                            DropDownMenuType.NewToOld -> {
-                                mainViewModel.sortByNewToOld()
-                            }
-
-                            DropDownMenuType.OldToNew -> {
-                                mainViewModel.sortByOldToNew()
-                            }
-                        }
-                    }
+                    newsUiVisibleState = true
                 }
 
                 is Resource.Loading -> LoadingWidget()
 
                 is Resource.DataError -> {}
+            }
+            AnimatedVisibility(
+                visible = newsUiVisibleState,
+                enter = expandVertically(
+                    animationSpec = keyframes {
+                        this.durationMillis = 500
+                    }
+                ),
+
+            ) {
+                NewsWidget(newsArticleState.data!!) { sortType ->
+                    when (sortType) {
+                        DropDownMenuType.NewToOld -> {
+                            mainViewModel.sortByNewToOld()
+                        }
+
+                        DropDownMenuType.OldToNew -> {
+                            mainViewModel.sortByOldToNew()
+                        }
+                    }
+                }
             }
         }
     }
@@ -151,7 +167,6 @@ fun NewsWidget(articles: List<NewsArticle>, sortCallback: (DropDownMenuType) -> 
         }
         Spacer(modifier = Modifier.height(4.dp))
         NewsArticleList(articles = articles)
-
     }
 
 }
@@ -281,6 +296,7 @@ fun NewsArticleList(articles: List<NewsArticle>) {
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun NewsItem(article: NewsArticle, context: Context) {
+    var expanded by remember { mutableStateOf(false) }
     Row(
         modifier = Modifier
             .clip(RoundedCornerShape(12.dp))
@@ -295,6 +311,7 @@ fun NewsItem(article: NewsArticle, context: Context) {
                 .fillMaxWidth()
                 .weight(1f)
                 .padding(8.dp)
+                .animateContentSize()
         ) {
             Text(
                 text = article.title.toString(),
@@ -310,29 +327,62 @@ fun NewsItem(article: NewsArticle, context: Context) {
                 maxLines = 3,
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = article.content.toString(),
-                style = MaterialTheme.typography.labelSmall.copy(
-                    fontWeight = FontWeight.Normal
+            if (expanded) {
+                Text(
+                    text = article.content.toString(),
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontWeight = FontWeight.Normal
 
-                ),
-                color = Color.Black,
-                textAlign = TextAlign.Start,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 3
-            )
+                    ),
+                    color = Color.Black,
+                    textAlign = TextAlign.Start
+                )
+
+            } else {
+                Text(
+                    text = article.content.toString(),
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontWeight = FontWeight.Normal
+
+                    ),
+                    color = Color.Black,
+                    textAlign = TextAlign.Start,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 3
+                )
+            }
+
             Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = article.toNewsFooter(),
-                style = MaterialTheme.typography.labelSmall.copy(
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.Normal,
-                    color = Color.Gray
-                ),
-                color = Color.Black,
-                textAlign = TextAlign.Start,
-                overflow = TextOverflow.Ellipsis,
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = article.toNewsFooter(),
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = Color.Gray
+                    ),
+                    color = Color.Black,
+                    textAlign = TextAlign.Start,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                )
+                Text(
+                    text = if (expanded) "Read Less" else "Read More",
+                    style = MaterialTheme.typography.labelSmall,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
+                    modifier = Modifier.clickable {
+                        expanded = !expanded
+                    })
+            }
 
         }
         GlideImage(
