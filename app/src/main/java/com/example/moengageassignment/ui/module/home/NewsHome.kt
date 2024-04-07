@@ -57,6 +57,7 @@ import com.bumptech.glide.integration.ktx.ExperimentGlideFlows
 import com.example.moengageassignment.MainViewModel
 import com.example.moengageassignment.R
 import com.example.moengageassignment.data.dto.NewsArticle
+import com.example.moengageassignment.ui.theme.appFontFamily
 import com.example.moengageassignment.utils.Extensions.openNewsInBrowser
 import com.example.moengageassignment.utils.Extensions.toFormattedDate
 import com.example.moengageassignment.utils.Extensions.toNewsFooter
@@ -163,7 +164,10 @@ fun TopHeadlines(articles: List<NewsArticle>) {
 
         Text(
             text = "Juicy Headlines",
-            style = MaterialTheme.typography.labelMedium.copy(fontSize = 18.sp)
+            style = MaterialTheme.typography.labelMedium.copy(
+                fontSize = 18.sp,
+                fontFamily = appFontFamily
+            )
         )
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -188,7 +192,10 @@ fun TopHeadlines(articles: List<NewsArticle>) {
                 )
                 Text(
                     text = articles[page].title.toString(),
-                    style = MaterialTheme.typography.labelMedium,
+                    style = MaterialTheme.typography.labelMedium.copy(
+                        fontFamily = appFontFamily,
+                        fontWeight = FontWeight.Bold
+                    ),
                     color = Color.Black,
                     textAlign = TextAlign.Center,
                     overflow = TextOverflow.Ellipsis,
@@ -240,7 +247,11 @@ fun NewsItem(article: NewsArticle, context: Context) {
             Text(
                 text = article.title.toString(),
                 style = MaterialTheme.typography.titleLarge.copy(fontSize = 14.sp)
-                    .copy(lineHeight = 20.sp),
+                    .copy(
+                        lineHeight = 20.sp,
+                        fontFamily = appFontFamily,
+                        fontWeight = FontWeight.Bold
+                    ),
                 color = Color.Black,
                 textAlign = TextAlign.Start,
                 overflow = TextOverflow.Ellipsis,
@@ -249,7 +260,10 @@ fun NewsItem(article: NewsArticle, context: Context) {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = article.content.toString(),
-                style = MaterialTheme.typography.labelSmall,
+                style = MaterialTheme.typography.labelSmall.copy(
+                    fontWeight = FontWeight.Normal
+
+                ),
                 color = Color.Black,
                 textAlign = TextAlign.Start,
                 overflow = TextOverflow.Ellipsis,
@@ -259,7 +273,9 @@ fun NewsItem(article: NewsArticle, context: Context) {
             Text(
                 text = article.toNewsFooter(),
                 style = MaterialTheme.typography.labelSmall.copy(
-                    fontSize = 10.sp
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Normal,
+                    color = Color.Gray
                 ),
                 color = Color.Black,
                 textAlign = TextAlign.Start,

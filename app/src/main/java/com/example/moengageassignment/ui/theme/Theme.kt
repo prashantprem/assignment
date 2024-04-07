@@ -13,7 +13,12 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.core.view.WindowCompat
+import com.example.moengageassignment.R
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -35,6 +40,15 @@ private val LightColorScheme = lightColorScheme(
     onBackground = Color(0xFF1C1B1F),
     onSurface = Color(0xFF1C1B1F),
     */
+)
+
+
+val appFontFamily = FontFamily(
+    Font(R.font.font_semi_medium, FontWeight.Light),
+    Font(R.font.font_regular, FontWeight.Normal),
+    Font(R.font.font_regular, FontWeight.Normal, FontStyle.Italic),
+    Font(R.font.font_medium, FontWeight.Medium),
+    Font(R.font.font_bold, FontWeight.Bold)
 )
 
 @Composable
@@ -61,7 +75,6 @@ fun MoEngageAssignmentTheme(
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
         }
     }
-
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
