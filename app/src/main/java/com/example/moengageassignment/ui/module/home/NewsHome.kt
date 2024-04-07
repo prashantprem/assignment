@@ -9,7 +9,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -23,21 +22,25 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeJoin
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -48,21 +51,20 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.bumptech.glide.integration.compose.Placeholder
 import com.bumptech.glide.integration.compose.placeholder
 import com.bumptech.glide.integration.ktx.ExperimentGlideFlows
 import com.example.moengageassignment.MainViewModel
 import com.example.moengageassignment.R
 import com.example.moengageassignment.data.dto.NewsArticle
+import com.example.moengageassignment.ui.components.AppDropDownMenu
+import com.example.moengageassignment.ui.components.DropDownMenuType
 import com.example.moengageassignment.ui.theme.appFontFamily
 import com.example.moengageassignment.utils.Extensions.openNewsInBrowser
 import com.example.moengageassignment.utils.Extensions.toFormattedDate
 import com.example.moengageassignment.utils.Extensions.toNewsFooter
 import com.example.moengageassignment.utils.Resource
-import com.example.moengageassignment.utils.Utility
 
 @Composable
 fun NewsHome(mainViewModel: MainViewModel) {
@@ -75,7 +77,17 @@ fun NewsHome(mainViewModel: MainViewModel) {
             val newsArticleState by mainViewModel.newsArticle.collectAsState()
             when (newsArticleState) {
                 is Resource.Success -> {
-                    NewsWidget(newsArticleState.data!!)
+                    NewsWidget(newsArticleState.data!!) { sortType ->
+                        when (sortType) {
+                            DropDownMenuType.NewToOld -> {
+                                mainViewModel.sortByNewToOld()
+                            }
+
+                            DropDownMenuType.OldToNew -> {
+                                mainViewModel.sortByOldToNew()
+                            }
+                        }
+                    }
                 }
 
                 is Resource.Loading -> LoadingWidget()
@@ -98,16 +110,44 @@ fun LoadingWidget() {
 }
 
 @Composable
-fun NewsWidget(articles: List<NewsArticle>) {
+fun NewsWidget(articles: List<NewsArticle>, sortCallback: (DropDownMenuType) -> Unit) {
+    var dropDownExpandedState by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
             .padding(top = 16.dp, start = 16.dp, end = 16.dp)
             .fillMaxSize()
     ) {
         Header()
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         TopHeadlines(articles)
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(4.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(text = "Just for you")
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            )
+            Box {
+                IconButton(onClick = {
+                    dropDownExpandedState = true
+
+                }) {
+                    Icon(imageVector = Icons.Default.MoreVert, contentDescription = null)
+                }
+                AppDropDownMenu(onClick = {
+                    dropDownExpandedState = false
+                    sortCallback(it)
+                }, expanded = dropDownExpandedState) {
+                    dropDownExpandedState = false
+
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(4.dp))
         NewsArticleList(articles = articles)
 
     }
